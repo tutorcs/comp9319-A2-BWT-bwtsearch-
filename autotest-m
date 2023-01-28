@@ -1,0 +1,59 @@
+#!/bin/bash
+#set -x #echo on
+
+echo "Testing begins ..."
+echo ""
+
+
+rm -f *.o bwtsearch *.fetch *.count *.idx
+
+# COMPILE
+make
+
+# SEARCH
+if [ -f bwtsearch ] ; then
+
+    ./bwtsearch -a ~cs9319/a2/tiny.rlb tiny.idx "in" > test1.fetch
+    ./bwtsearch -n ~cs9319/a2/tiny.rlb tiny.idx "in" > test1.count
+
+    ./bwtsearch -a ~cs9319/a2/tiny.rlb tiny.idx "an" > test2.fetch
+    ./bwtsearch -n ~cs9319/a2/tiny.rlb tiny.idx "an" > test2.count
+
+    ./bwtsearch -a ~cs9319/a2/small.rlb small.idx "e comp" > test3.fetch
+    ./bwtsearch -n ~cs9319/a2/small.rlb small.idx "e comp" > test3.count
+
+    ./bwtsearch -a ~cs9319/a2/small.rlb small.idx "ing" > test4.fetch    
+    ./bwtsearch -n ~cs9319/a2/small.rlb small.idx "ing" > test4.count
+
+    ./bwtsearch -n ~cs9319/a2/medium.rlb medium.idx "databases" > test5.count
+    ./bwtsearch -a ~cs9319/a2/medium.rlb medium.idx "databases" > test5.fetch
+
+    ./bwtsearch -n ~cs9319/a2/medium.rlb medium.idx "Databases" > test6.count
+    ./bwtsearch -a ~cs9319/a2/medium.rlb medium.idx "Databases" > test6.fetch
+    
+    
+    for ((k=1;k<7;++k))
+    do
+	correct=`eval diff -q ~cs9319/a2/test/test$k.count test$k.count`
+	if [ -z "$correct" ]; then
+	    echo "test$k count: CORRECT"
+	else
+	    echo "test$k count: FAILED"
+	fi
+	correct=`eval diff -q ~cs9319/a2/test/test$k.fetch test$k.fetch`
+	if [ -z "$correct" ]; then
+	    echo "test$k fetch: CORRECT"
+	else
+	    echo "test$k fetch: FAILED"
+	fi
+    done
+
+    echo ""
+    echo "Testing - total 6 tests, 2 checks (-n and -a) per test."
+    echo "You can find out each test's detail by 'cat ~cs9319/a2/autotest-m'"
+    echo ""
+
+else
+    echo "Failed to compile ldecode."
+fi
+

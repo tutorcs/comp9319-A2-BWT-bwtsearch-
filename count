@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 FILE.txt PATTERN"
+    exit
+fi
+
+awk -f ~cs9319/bin/count.awk -v pattern="$2" $1
